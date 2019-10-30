@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Search API</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $.ajaxSetup({
+                    error: function (x, status, error) {
+                        if (x.status == 401) {
+                            $("#authentication").show();
+                        }
+                    }
+                });
+            });
+
+            $("#get-token").submit(function(event){
+                event.preventDefault();
+
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var form_data = JSON.stringify({username: username, password:password});
+
+                $.ajax({
+                    url : "http://search.service/api/login_check",
+                    type : "post",
+                    contentType : "application/json",
+                    data : form_data,
+                    success : function(response){
+                        $("#token").html(response.token);
+                        $("#authentication").hide();
+                    }
+                });
+            });
+
+            $("#search").submit(function(event){
+                event.preventDefault();
+
+                var text = $("#text").val();
+                var page = $("#page").val();
+                var sort_by = $("#sort_by").val();
+                var brand = $("#brand").val();
+                var token = $("#token").html();
+
+                $.ajax({
+                    url : "http://search.service/api/v1/search?query="+text+"&page="+page+"&sort_by="+sort_by+"&filter=brand:"+brand,
+                    type : "get",
+                    contentType : "application/json",
+                    headers: {
+                        'Authorization': 'Bearer '+token,
+                    },
+                    success : function(response){
+                        $("#search-results").html(JSON.stringify(response));
+                        $("#authentication").hide();
+                    }
+                });
+            });
+
+            $("#authentication").hide();
+        });
+    </script>
+</head>
+<body>
+    <label style="color: red" id="authentication">Authentication Failed!</label>
+
+    <h3>Get Token</h3>
+    <form action="" method="post" id="get-token">
+        <div>
+            <label>Username:</label>
+            <input type="text" id="username">
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" id="password">
+        </div>
+        <div>
+            <input type="submit" value="Get Token">
+        </div>
+    </form>
+
+    <h3>Search</h3>
+
+    <form action="" method="GET" id="search">
+        <div>
+            <label>Token</label>
+            <textarea id="token"></textarea>
+        </div>
+        <div>
+            <label>Text:</label>
+            <input type="text" id="text">
+        </div>
+        <div>
+            <label>Page:</label>
+            <input type="number" id="page">
+        </div>
+        <div>
+            <label>SortBy (title or price):</label>
+            <input type="text" id="sort_by">
+        </div>
+        <div>Filter:</div>
+        <div>
+            <label>Brand</label>
+            <input type="text" id="brand">
+        </div>
+        <div>
+            <input type="submit" value="Search">
+        </div>
+    </form>
+
+    <br>
+
+    <pre id="search-results"></pre>
+</body>
+</html>
