@@ -27,7 +27,7 @@ docker exec -it {php_container_id} bash
 /app# console doctrine:migrations:migrate
 ```
 
-Follow instructions to create .pem files for API authentication
+Follow instructions to create .pem files for API authentication (use pass phrase from the env file while creating the files!)
 
 https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#generate-the-ssh-keys
 
