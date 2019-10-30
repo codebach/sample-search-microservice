@@ -12,7 +12,7 @@ Start docker:
 docker-compose up
 ```
 
-Go to php container and install composer:
+Go to php container, install composer and make database migrations:
 
 ```
 docker ps
@@ -24,6 +24,7 @@ docker exec -it {php_container_id} bash
 
 ```
 /app# composer install
+/app# console doctrine:migrations:migrate
 ```
 
 Follow instructions to create .pem files for API authentication
